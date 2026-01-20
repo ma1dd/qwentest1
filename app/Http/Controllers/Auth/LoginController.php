@@ -21,8 +21,10 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         // Removed validation as per consistency with registration
+        $login_type = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'login';
+        
         $credentials = [
-            'email' => $request->email,
+            $login_type => $request->login,
             'password' => $request->password,
         ];
 
@@ -33,7 +35,7 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'login' => 'The provided credentials do not match our records.',
         ]);
     }
 }

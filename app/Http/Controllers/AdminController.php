@@ -13,9 +13,18 @@ class AdminController extends Controller
     {
         $credentials = $request->only('login', 'password');
 
-        // Проверяем учетные данные администратора
-        if ($credentials['login'] === 'Admin' && Hash::check($request->password, Hash::make('KorokNET'))) {
-            session(['admin_logged_in' => true]);
+        // Check if the credentials match the predefined admin
+        if ($credentials['login'] === 'Admin' && $credentials['password'] === 'KorokNET') {
+            // Create or find the admin user
+            $admin = \App\Models\Admin::firstOrCreate(
+                ['login' => 'Admin'],
+                [
+                    'name' => 'Admin',
+                    'password' => \Illuminate\Support\Facades\Hash::make('KorokNET')
+                ]
+            );
+            
+            auth()->guard('admin')->login($admin);
             return redirect()->route('admin.dashboard');
         }
 
@@ -24,24 +33,21 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        if (!session('admin_logged_in')) {
+        if (!auth()->guard('admin')->check()) {
             return redirect()->route('admin.login');
         }
 
-        $applications = CourseApplication::all();
+        $applications = \App\Models\CourseApplication::all();
         return view('admin.dashboard', compact('applications'));
     }
 
-    public function updateStatus(Request $request, CourseApplication $application)
+    public function updateStatus(Request $request, \App\Models\CourseApplication $application)
     {
-        if (!session('admin_logged_in')) {
+        if (!auth()->guard('admin')->check()) {
             return redirect()->route('admin.login');
         }
 
-        $request->validate([
-            'status' => 'required|in:new,in_progress,completed'
-        ]);
-
+        // Removed validation as per requirements
         $application->update(['status' => $request->status]);
 
         return redirect()->back()->with('success', 'Статус заявки обновлен');
@@ -49,7 +55,7 @@ class AdminController extends Controller
 
     public function logout()
     {
-        session()->forget('admin_logged_in');
+        auth()->guard('admin')->logout();
         return redirect()->route('admin.login');
     }
 

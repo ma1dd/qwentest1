@@ -21,14 +21,14 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
-        // Removed validation as per user request
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'login' => $request->login,
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
-        ]);
+        // No validation for registration as per requirements
+        $data = $request->only(['name', 'email', 'login', 'phone']);
+        $data['password'] = Hash::make($request->password);
+        
+        // Filter out null values to avoid database errors for non-nullable fields
+        $user = User::create(array_filter($data, function($value) {
+            return $value !== null;
+        }));
 
         auth()->login($user);
 
