@@ -10,14 +10,15 @@ Route::get('/', function () {
 });
 
 // Маршруты аутентификации
-Route::middleware('guest')->group(function () {
-    Route::get('/register', function () {
-        return view('auth.register');
-    })->name('register');
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginController;
 
-    Route::get('/login', function () {
-        return view('auth.login');
-    })->name('login');
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
+
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 });
 
 // Защищенные маршруты для пользователей
