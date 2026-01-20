@@ -1,36 +1,34 @@
-```
-# Laravel-specific ignores
-bootstrap/cache/
-storage/framework/cache/
-storage/framework/sessions/
-storage/framework/views/
+```gitignore
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+
+# Dependencies
 vendor/
+node_modules/
+composer.lock
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
 
 # Environment
 .env
 .env.local
-.env.*
+*.env.*
 
-# Logs
-*.log
-storage/logs/
-
-# IDE
+# Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# OS
+# OS generated files
 .DS_Store
 Thumbs.db
 
-# Build artifacts
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Testing
-.phpunit.result.cache
+# Laravel specific
+bootstrap/cache/
+storage/logs/
+storage/framework/
+public/storage/
 ```
